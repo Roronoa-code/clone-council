@@ -46,3 +46,38 @@ On the owner's machine, using its existing official CLI subscription logins:
 4. Resume the completed run; invocation count must remain unchanged. Do not weaken flags, bypass nested-session safeguards, or introduce API billing when a compatibility check fails.
 
 These are explicit future acceptance checks for the local installation, not steps claimed to have happened in this build environment.
+
+## Clone experiment — 2026-09-23
+
+The record above is preserved from upstream. This section records new work in `Roronoa-code/clone-council` only, not changes to the original Council repository.
+
+### Exact baseline
+
+Upstream `main` was pinned to `af5d94a16decad673b056d9156dabdedbec37f5f`. The clone baseline commit `6f6320b2cbba3118837250d951c791ec6450dde4`, preserved on `baseline/council-main`, has the same Git tree SHA: `7d4c0b1abeecf1655abd339cbafe918cd1185870`. This verifies tracked paths, modes and contents, not mirrored Git history, issues, secrets or repository settings.
+
+The first temporary bootstrap push was rejected because its workflow token lacked permission to create `.github/workflows/ci.yml`. The connected GitHub tool copied that workflow; the runner then copied the remaining source without changing workflows. The connected tool removed the temporary bootstrap, and the resulting tree was verified identical. No permission restriction was weakened, no original-repository write was made, and no temporary bootstrap workflow remains in the baseline or implementation.
+
+### Tested implementation
+
+Code/test commit: `3b1ff5aaa518010108ac6c20b2fa95f962bb043f`.
+
+[Completed CI run 35920308544](https://github.com/Roronoa-code/clone-council/actions/runs/35920308544) ran the unchanged Offline reliability workflow. All four job results and their build/test/smoke/clean-worktree steps were inspected and reported success:
+
+| Matrix job | Job ID | Result |
+|---|---:|---|
+| Ubuntu / Python 3.11 | 107382269276 | success |
+| Ubuntu / Python 3.13 | 107382269544 | success |
+| Windows / Python 3.11 | 107382269716 | success |
+| Windows / Python 3.13 | 107382269526 | success |
+
+The suite contains the original 62 tests plus 15 new handoff-contract tests. Detailed logs inspected for Ubuntu 3.11 report `Ran 77 tests` / `OK`. Detailed Windows 3.13 logs report `Ran 77 tests` / `OK (skipped=1)`, with the existing Linux-only process-group inspection test skipped. The new handoff tests all passed in those logs; the other two matrix jobs also reported successful complete-suite steps.
+
+All four jobs built and installed the package, ran the test suite, then ran the installed package from outside the checkout: a seven-stage synthetic deep demo, completed-run resume, and native-skill installation for both hosts. The inspected smoke logs show all seven validated stages reused on resume, without new provider invocations. The final tracked-worktree checks passed. These are GitHub-hosted checks, not a claim of a complete local checkout test run in the editing container; that container was used only for patch construction and syntax checks.
+
+The patch changes one runtime file, `council/report.py`. It adds a reproducible decision/brief-bound handoff reference, preserves the full proposal and acceptance criteria, and exposes the identity in report.json. Tests cover content changes, JSON key ordering, run/protocol/profile separation, unchanged resume, preserved external receipts, all verdict authority warnings, evidence namespacing, original-state immutability and compatibility with existing selective context intake. Templates and the guide describe the external result/review loop. No prompts, decision schema, engine, provider routing, workflow, budget enforcement or packaged skill resources were changed.
+
+This verification-only append was made after that CI run; it does not change the tested runtime or tests. The commit message skips redundant CI for this documentation record. Test evidence remains tied to the code/test commit above.
+
+### Limits of this verification
+
+No live Codex/Claude model was invoked, no local account/subscription compatibility was established, and no procurement, customer or trading experiment was conducted. The tests establish engineering behaviour, not superior decisions, revenue or a benefit over a complete manual handoff. The reference is a content fingerprint, not an approval signature or tamper-proof control. RESULT.md checking and project-state ownership remain with the external coordinator; there is no automatic receipt parser, autonomous project manager or new execution authority. The linked comparison procedure in `docs/project-review.md` must be evaluated separately before adding more architecture.
