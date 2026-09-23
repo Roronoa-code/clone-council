@@ -1,4 +1,6 @@
-# Council
+# Council — linked handoff experiment
+
+This is the experimental `clone-council` repository. The [baseline branch](https://github.com/Roronoa-code/clone-council/tree/baseline/council-main) preserves the exact upstream file tree before changes; the original Council repository is untouched. Start with the [decision → result → review guide](docs/project-review.md).
 
 **A decision tool, not three agreeable personalities.** Independent opportunity, skeptic and operator passes → bounded evidence review → an actionable verdict. Built for **Codex and Claude Code**, with **Codex leading mixed councils**.
 
@@ -21,13 +23,15 @@ Install Python 3.11+ and Git. Install/sign in to the official [Codex CLI](https:
 In PowerShell:
 
 ```powershell
-git clone https://github.com/Roronoa-code/council.git
-cd council
+git clone https://github.com/Roronoa-code/clone-council.git
+cd clone-council
 py -3 -m venv .venv
 .\.venv\Scripts\python.exe -m pip install .
-.\.venv\Scripts\python.exe -m council install --target both
+.\.venv\Scripts\python.exe -m council install --target both --project .
 .\.venv\Scripts\python.exe -m council doctor --profile mixed
 ```
+
+The example installs the skills into this clone only (`--project .`), so evaluating it need not replace your user-wide Council installation. Open the clone as the host project.
 
 The explicit interpreter path avoids PowerShell activation-policy problems. The installer records that interpreter in each installed skill's local `runtime.json`; keep the virtual environment in place. It does not edit either CLI's global settings. Existing different skills are refused unless `--force` is supplied; replacements are backed up.
 
@@ -87,6 +91,14 @@ Resume validates the original brief/configuration and completed-stage fingerprin
 
 `council unlock RUN` removes a lock only when its owning local process is no longer running. `council outcome RUN --result pass|fail|inconclusive --note "What actually happened"` records a **user-reported** outcome on a completed live run. It does not train a model or independently verify success.
 
+## Decision → result → review
+
+The engine-generated handoff now preserves the full bounded proposal: constraints, rationale, acceptance criteria, experiment metrics/thresholds/timebox/cost ceiling, stop/revisit conditions and dissent. It carries a content-bound reference, also available as `report.json.handoff_contract`. AC1, AC2, etc. belong to that exact reference—not to every future decision. A fingerprint is not permission or independent verification.
+
+The external executor returns a [RESULT.md receipt](examples/result-template.md) against those criteria, separating implementation evidence from the observed experiment outcome. Your existing coordinator owns PROJECT.md/STATE.md and chooses whether new evidence warrants another ordinary Council run. No database, new agent loop, extra model stage or autonomous project manager was added. Manual native-skill answers do not automatically inherit the CLI renderer's binding.
+
+The [workflow guide](docs/project-review.md) includes selective context, supersession, the Economic Agent example and a test for whether this is better than a complete manual handoff.
+
 ## Verification and development
 
 ```powershell
@@ -94,7 +106,7 @@ Resume validates the original brief/configuration and completed-stage fingerprin
 .\.venv\Scripts\python.exe -m council schema decision
 ```
 
-[GitHub Actions](https://github.com/Roronoa-code/council/actions) runs offline tests and installed-package smoke checks on Windows/Linux with Python 3.11/3.13. CI uses no model credentials and uploads no private run artifacts. A workflow definition alone is not a passed run; inspect the actual check result.
+[GitHub Actions](https://github.com/Roronoa-code/clone-council/actions) runs offline tests and installed-package smoke checks on Windows/Linux with Python 3.11/3.13. CI uses no model credentials and uploads no private run artifacts. A workflow definition alone is not a passed run; inspect the actual check result.
 
 See [evaluation cases and rubric](docs/evaluation.md) for comparing a single-agent baseline with Council without confusing test-suite correctness with better advice. The project makes no measured superiority claim.
 
