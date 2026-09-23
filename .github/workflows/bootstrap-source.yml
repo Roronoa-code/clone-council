@@ -30,11 +30,13 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git read-tree --reset -u "${SOURCE_SHA}"
-          git commit -m "chore: copy Council main exactly at ${SOURCE_SHA}"
-          test "$(git rev-parse HEAD^{tree})" = "${SOURCE_TREE}"
+          git restore --source=HEAD --staged --worktree .github/workflows/bootstrap-source.yml
+          git diff --cached --exit-code -- .github/workflows
+          git commit -m "chore: copy Council source ${SOURCE_SHA}; retain temporary bootstrap"
+          git diff --exit-code "${SOURCE_SHA}" HEAD -- . ':(exclude).github/workflows/bootstrap-source.yml'
           git push origin HEAD:main
-          echo "BASELINE_COMMIT=$(git rev-parse HEAD)"
-          echo "BASELINE_TREE=$(git rev-parse HEAD^{tree})"
+          echo "SOURCE_COPY_COMMIT=$(git rev-parse HEAD)"
+          echo 'Source matches except for the temporary bootstrap workflow; remove it through the authorised connector.'
       - name: Verify copied source with offline tests
         run: |
           python -m unittest discover -s tests -v
