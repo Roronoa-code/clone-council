@@ -1,0 +1,43 @@
+name: Bootstrap Council source snapshot
+on:
+  push:
+    paths:
+      - .github/workflows/bootstrap-source.yml
+permissions:
+  contents: write
+concurrency:
+  group: clone-council-bootstrap
+  cancel-in-progress: false
+jobs:
+  copy:
+    if: github.repository == 'Roronoa-code/clone-council'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Copy pinned source without modifying original
+        shell: bash
+        env:
+          SOURCE_SHA: af5d94a16decad673b056d9156dabdedbec37f5f
+          SOURCE_TREE: 7d4c0b1abeecf1655abd339cbafe918cd1185870
+        run: |
+          set -euo pipefail
+          test "${GITHUB_REPOSITORY}" = 'Roronoa-code/clone-council'
+          git fetch --no-tags https://github.com/Roronoa-code/council.git "${SOURCE_SHA}"
+          test "$(git rev-parse "${SOURCE_SHA}^{tree}")" = "${SOURCE_TREE}"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git read-tree --reset -u "${SOURCE_SHA}"
+          git commit -m "chore: copy Council main exactly at ${SOURCE_SHA}"
+          test "$(git rev-parse HEAD^{tree})" = "${SOURCE_TREE}"
+          git push origin HEAD:main
+          echo "BASELINE_COMMIT=$(git rev-parse HEAD)"
+          echo "BASELINE_TREE=$(git rev-parse HEAD^{tree})"
+      - name: Verify copied source with offline tests
+        run: |
+          python -m unittest discover -s tests -v
+          python -m council demo --out "${RUNNER_TEMP}/council-baseline-demo"
+          python -m council resume "${RUNNER_TEMP}/council-baseline-demo"
+          git diff --exit-code
